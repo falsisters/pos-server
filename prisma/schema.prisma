@@ -84,17 +84,27 @@ model Shift {
 model Product {
   id           String         @id @default(cuid())
   name         String
-  price        Float
-  type         String
   stock        Int
   minimumQty   Int            @default(1)
   SaleItem     SaleItem[]
   DeliveryItem DeliveryItem[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  KahonItem    KahonItem[]
   Transfer     Transfer[]
   Profit       Profit[]
+  Price        Price[]
+  KahonStock   KahonStock[]
+}
+
+model Price {
+  id        String      @id @default(cuid())
+  name      String
+  price     Float
+  type      ProductType
+  productId String
+  product   Product     @relation(fields: [productId], references: [id])
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 enum ProductType {
@@ -184,37 +194,51 @@ enum TransferType {
 }
 
 model Kahon {
-  id        String      @id @default(cuid())
-  cashierId String
-  cashier   Cashier     @relation(fields: [cashierId], references: [id])
-  total     Float
-  items     KahonItem[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  KahonSale KahonSale[]
+  id                 String               @id @default(cuid())
+  cashierId          String
+  cashier            Cashier              @relation(fields: [cashierId], references: [id])
+  total              Float
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  KahonTotalModifier KahonTotalModifier[]
 }
 
-model KahonItem {
-  id          String    @id @default(cuid())
-  kahonId     String
-  kahon       Kahon     @relation(fields: [kahonId], references: [id])
-  productId   String
-  product     Product   @relation(fields: [productId], references: [id])
-  qty         Int
-  price       Float
-  kahonSaleId String
-  kahonSale   KahonSale @relation(fields: [kahonSaleId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model KahonStock {
+  id                 String               @id @default(cuid())
+  qty                Int
+  productId          String
+  product            Product              @relation(fields: [productId], references: [id])
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  KahonStockModifier KahonStockModifier[]
 }
 
-model KahonSale {
-  id        String      @id @default(cuid())
+model KahonStockModifier {
+  id           String        @id @default(cuid())
+  index        Int
+  operation    OperationType
+  kahonStockId String
+  kahon        KahonStock    @relation(fields: [kahonStockId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model KahonTotalModifier {
+  id        String        @id @default(cuid())
+  index     Int
+  operation OperationType
   kahonId   String
-  kahon     Kahon       @relation(fields: [kahonId], references: [id])
-  items     KahonItem[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  kahon     Kahon         @relation(fields: [kahonId], references: [id])
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum OperationType {
+  ADDITION
+  SUBTRACTION
+  MULTIPLICATION
+  DIVISION
+  TOTAL
 }
 
 model CashBreakdown {

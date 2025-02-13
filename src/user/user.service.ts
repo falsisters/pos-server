@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { prisma } from 'src/prisma';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  async findUser(data: { email: string }): Promise<User> {
+  async findUser(data: { email: string }) {
     return prisma.user.findUnique({
       where: {
         email: data.email,
@@ -13,11 +12,7 @@ export class UserService {
     });
   }
 
-  async createUser(data: {
-    email: string;
-    name: string;
-    password: string;
-  }): Promise<User> {
+  async createUser(data: { email: string; name: string; password: string }) {
     const encryptedPassword = await this.encryptPassword(data.password);
 
     return prisma.user.create({
@@ -29,7 +24,7 @@ export class UserService {
     });
   }
 
-  private async encryptPassword(password: string): Promise<string> {
+  private async encryptPassword(password: string) {
     const salt = await bcrypt.genSalt(10);
     return bcrypt.hash(password, salt);
   }

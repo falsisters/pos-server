@@ -50,6 +50,7 @@ model Cashier {
   Sale          Sale[]
   CashBreakdown CashBreakdown[]
   Kahon         Kahon[]
+  Expense       Expense[]
 }
 
 model CashierPermission {
@@ -241,14 +242,26 @@ enum OperationType {
   TOTAL
 }
 
+model Expense {
+  id          String   @id @default(cuid())
+  cashierId   String
+  cashier     Cashier  @relation(fields: [cashierId], references: [id])
+  description String
+  price       Float
+  attachments String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model CashBreakdown {
-  id        String              @id @default(cuid())
-  cashierId String
-  cashier   Cashier             @relation(fields: [cashierId], references: [id])
-  total     Float
-  items     CashBreakdownItem[]
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  id             String              @id @default(cuid())
+  initialBalance Float
+  cashierId      String
+  cashier        Cashier             @relation(fields: [cashierId], references: [id])
+  total          Float
+  items          CashBreakdownItem[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
 }
 
 model CashBreakdownItem {

@@ -11,9 +11,27 @@ import { KahonModule } from './kahon/kahon.module';
 import { TransferModule } from './transfer/transfer.module';
 import { BreakdownModule } from './breakdown/breakdown.module';
 import { ExpenseModule } from './expense/expense.module';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UserModule, CashierModule, ShiftModule, ProductModule, SaleModule, DeliveryModule, KahonModule, TransferModule, BreakdownModule, ExpenseModule],
+  imports: [
+    UserModule,
+    CashierModule,
+    ShiftModule,
+    ProductModule,
+    SaleModule,
+    DeliveryModule,
+    KahonModule,
+    TransferModule,
+    BreakdownModule,
+    ExpenseModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

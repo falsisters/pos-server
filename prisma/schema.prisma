@@ -1,0 +1,248 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String           @id @default(cuid())
+  email       String           @unique
+  name        String
+  permissions UserPermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model UserPermission {
+  id        String             @id @default(cuid())
+  name      UserPermissionType
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  userId    String
+  user      User               @relation(fields: [userId], references: [id])
+}
+
+enum UserPermissionType {
+  READ
+  WRITE
+  DELETE
+}
+
+model Cashier {
+  id            String              @id @default(cuid())
+  name          String
+  accessKey     String              @unique
+  secureCode    String              @unique @default(cuid())
+  permissions   CashierPermission[]
+  shifts        Shift[]
+  deliveries    Delivery[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  Sale          Sale[]
+  CashBreakdown CashBreakdown[]
+  Kahon         Kahon[]
+}
+
+model CashierPermission {
+  id        String                @id @default(cuid())
+  name      CashierPermissionType
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+  cashierId String
+  cashier   Cashier               @relation(fields: [cashierId], references: [id])
+}
+
+enum CashierPermissionType {
+  PRICES
+  DELIVERIES
+  STOCKS
+  PROFITS
+  KAHON
+  SALES_CHECK
+  SALES_HISTORY
+}
+
+model Shift {
+  id        String   @id @default(cuid())
+  cashierId String
+  cashier   Cashier  @relation(fields: [cashierId], references: [id])
+  clockIn   DateTime
+  clockOut  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id           String         @id @default(cuid())
+  name         String
+  price        Float
+  type         String
+  stock        Int
+  minimumQty   Int            @default(1)
+  SaleItem     SaleItem[]
+  DeliveryItem DeliveryItem[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  KahonItem    KahonItem[]
+  Transfer     Transfer[]
+  Profit       Profit[]
+}
+
+enum ProductType {
+  FIFTY_KG
+  TWENTY_FIVE_KG
+  FIVE_KG
+  PER_KILO
+  GANTANG
+}
+
+model Profit {
+  id        String   @id @default(cuid())
+  profit    Float
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sale {
+  id            String        @id @default(cuid())
+  cashierId     String
+  cashier       Cashier       @relation(fields: [cashierId], references: [id])
+  total         Float
+  paymentMethod PaymentMethod
+  items         SaleItem[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CHECK
+}
+
+model SaleItem {
+  id        String   @id @default(cuid())
+  saleId    String
+  sale      Sale     @relation(fields: [saleId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  qty       Int
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Delivery {
+  id          String         @id @default(cuid())
+  cashierId   String
+  cashier     Cashier        @relation(fields: [cashierId], references: [id])
+  total       Float
+  items       DeliveryItem[]
+  attachments String[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model DeliveryItem {
+  id         String   @id @default(cuid())
+  deliveryId String
+  delivery   Delivery @relation(fields: [deliveryId], references: [id])
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  qty        Int
+  price      Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Transfer {
+  id          String       @id @default(cuid())
+  productId   String
+  product     Product      @relation(fields: [productId], references: [id])
+  attachments String[]
+  qty         Int
+  type        TransferType
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum TransferType {
+  OWN_CONSUMPTION
+  RETURN_TO_WAREHOUSE
+  REPACK
+}
+
+model Kahon {
+  id        String      @id @default(cuid())
+  cashierId String
+  cashier   Cashier     @relation(fields: [cashierId], references: [id])
+  total     Float
+  items     KahonItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  KahonSale KahonSale[]
+}
+
+model KahonItem {
+  id          String    @id @default(cuid())
+  kahonId     String
+  kahon       Kahon     @relation(fields: [kahonId], references: [id])
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])
+  qty         Int
+  price       Float
+  kahonSaleId String
+  kahonSale   KahonSale @relation(fields: [kahonSaleId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model KahonSale {
+  id        String      @id @default(cuid())
+  kahonId   String
+  kahon     Kahon       @relation(fields: [kahonId], references: [id])
+  items     KahonItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model CashBreakdown {
+  id        String              @id @default(cuid())
+  cashierId String
+  cashier   Cashier             @relation(fields: [cashierId], references: [id])
+  total     Float
+  items     CashBreakdownItem[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+model CashBreakdownItem {
+  id              String        @id @default(cuid())
+  cashBreakdownId String
+  cashBreakdown   CashBreakdown @relation(fields: [cashBreakdownId], references: [id])
+  bill            String
+  qty             Int
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+enum Bill {
+  thousand
+  fiveHundred
+  twoHundred
+  oneHundred
+  fifty
+  twenty
+  coins
+}

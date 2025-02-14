@@ -22,6 +22,7 @@ model User {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   Cashier     Cashier[]
+  Product     Product[]
 }
 
 model UserPermission {
@@ -45,7 +46,7 @@ model Cashier {
   accessKey     String
   secureCode    String              @default(cuid())
   userId        String
-  user          User                @relation(fields: [userId], references: [id])
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   permissions   CashierPermission[]
   shifts        Shift[]
   deliveries    Delivery[]
@@ -63,7 +64,7 @@ model CashierPermission {
   createdAt DateTime              @default(now())
   updatedAt DateTime              @updatedAt
   cashierId String
-  cashier   Cashier               @relation(fields: [cashierId], references: [id])
+  cashier   Cashier               @relation(fields: [cashierId], references: [id], onDelete: Cascade)
 }
 
 enum CashierPermissionType {
@@ -80,7 +81,7 @@ model Shift {
   id        String   @id @default(cuid())
   cashierId String
   employee  String
-  cashier   Cashier  @relation(fields: [cashierId], references: [id])
+  cashier   Cashier  @relation(fields: [cashierId], references: [id], onDelete: Cascade)
   clockIn   DateTime
   clockOut  DateTime
   createdAt DateTime @default(now())
@@ -94,23 +95,24 @@ model Product {
   minimumQty   Int            @default(1)
   SaleItem     SaleItem[]
   DeliveryItem DeliveryItem[]
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   Transfer     Transfer[]
-  Profit       Profit[]
   Price        Price[]
   KahonStock   KahonStock[]
 }
 
 model Price {
   id        String      @id @default(cuid())
-  name      String
   price     Float
   type      ProductType
   productId String
-  product   Product     @relation(fields: [productId], references: [id])
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+  Profit    Profit[]
 }
 
 enum ProductType {
@@ -124,16 +126,16 @@ enum ProductType {
 model Profit {
   id        String   @id @default(cuid())
   profit    Float
-  productId String
-  product   Product  @relation(fields: [productId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  price     Price    @relation(fields: [priceId], references: [id], onDelete: Cascade)
+  priceId   String
 }
 
 model Sale {
   id            String        @id @default(cuid())
   cashierId     String
-  cashier       Cashier       @relation(fields: [cashierId], references: [id])
+  cashier       Cashier       @relation(fields: [cashierId], references: [id], onDelete: Cascade)
   total         Float
   paymentMethod PaymentMethod
   items         SaleItem[]
@@ -150,9 +152,9 @@ enum PaymentMethod {
 model SaleItem {
   id        String   @id @default(cuid())
   saleId    String
-  sale      Sale     @relation(fields: [saleId], references: [id])
+  sale      Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
   productId String
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   qty       Int
   price     Float
   createdAt DateTime @default(now())
@@ -162,7 +164,7 @@ model SaleItem {
 model Delivery {
   id          String         @id @default(cuid())
   cashierId   String
-  cashier     Cashier        @relation(fields: [cashierId], references: [id])
+  cashier     Cashier        @relation(fields: [cashierId], references: [id], onDelete: Cascade)
   total       Float
   items       DeliveryItem[]
   attachments String[]
@@ -173,9 +175,9 @@ model Delivery {
 model DeliveryItem {
   id         String   @id @default(cuid())
   deliveryId String
-  delivery   Delivery @relation(fields: [deliveryId], references: [id])
+  delivery   Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
   productId  String
-  product    Product  @relation(fields: [productId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   qty        Int
   price      Float
   createdAt  DateTime @default(now())
@@ -185,7 +187,7 @@ model DeliveryItem {
 model Transfer {
   id          String       @id @default(cuid())
   productId   String
-  product     Product      @relation(fields: [productId], references: [id])
+  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   attachments String[]
   qty         Int
   type        TransferType
@@ -202,7 +204,7 @@ enum TransferType {
 model Kahon {
   id                 String               @id @default(cuid())
   cashierId          String
-  cashier            Cashier              @relation(fields: [cashierId], references: [id])
+  cashier            Cashier              @relation(fields: [cashierId], references: [id], onDelete: Cascade)
   total              Float
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
@@ -213,7 +215,7 @@ model KahonStock {
   id                 String               @id @default(cuid())
   qty                Int
   productId          String
-  product            Product              @relation(fields: [productId], references: [id])
+  product            Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   KahonStockModifier KahonStockModifier[]
@@ -224,7 +226,7 @@ model KahonStockModifier {
   index        Int
   operation    OperationType
   kahonStockId String
-  kahon        KahonStock    @relation(fields: [kahonStockId], references: [id])
+  kahon        KahonStock    @relation(fields: [kahonStockId], references: [id], onDelete: Cascade)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -234,7 +236,7 @@ model KahonTotalModifier {
   index     Int
   operation OperationType
   kahonId   String
-  kahon     Kahon         @relation(fields: [kahonId], references: [id])
+  kahon     Kahon         @relation(fields: [kahonId], references: [id], onDelete: Cascade)
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 }
@@ -250,7 +252,7 @@ enum OperationType {
 model Expense {
   id          String   @id @default(cuid())
   cashierId   String
-  cashier     Cashier  @relation(fields: [cashierId], references: [id])
+  cashier     Cashier  @relation(fields: [cashierId], references: [id], onDelete: Cascade)
   description String
   price       Float
   attachments String[]
@@ -262,7 +264,7 @@ model CashBreakdown {
   id             String              @id @default(cuid())
   initialBalance Float
   cashierId      String
-  cashier        Cashier             @relation(fields: [cashierId], references: [id])
+  cashier        Cashier             @relation(fields: [cashierId], references: [id], onDelete: Cascade)
   total          Float
   items          CashBreakdownItem[]
   createdAt      DateTime            @default(now())
@@ -272,7 +274,7 @@ model CashBreakdown {
 model CashBreakdownItem {
   id              String        @id @default(cuid())
   cashBreakdownId String
-  cashBreakdown   CashBreakdown @relation(fields: [cashBreakdownId], references: [id])
+  cashBreakdown   CashBreakdown @relation(fields: [cashBreakdownId], references: [id], onDelete: Cascade)
   bill            String
   qty             Int
   createdAt       DateTime      @default(now())

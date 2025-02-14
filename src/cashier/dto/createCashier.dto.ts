@@ -1,4 +1,9 @@
-import { IsString, MinLength } from 'class-validator';
+import {
+  IsNumberString,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateCashierDto {
   @IsString()
@@ -7,4 +12,9 @@ export class CreateCashierDto {
 
   @IsString()
   userId: string;
+
+  @IsString()
+  @IsNumberString()
+  @MaxLength(4)
+  accessKey: string;
 }

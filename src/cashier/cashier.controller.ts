@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Post, Put } from '@nestjs/common';
 import { CashierService } from './cashier.service';
 import { CreateCashierDto } from './dto/createCashier.dto';
 import { LoginAsCashierDto } from './dto/loginAsCashier.dto';
@@ -18,7 +18,7 @@ export class CashierController {
     return this.cashierService.validateCashier(loginAsCashier);
   }
 
-  @Patch()
+  @Put()
   async editCashier(@Body() editCashier: EditCashierDto) {
     return this.cashierService.editCashier(editCashier);
   }

@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
+  Param,
   Post,
   Put,
   Request,
@@ -18,6 +20,18 @@ import { DeleteCashierDto } from './dto/deleteCashier.dto';
 @Controller('cashier')
 export class CashierController {
   constructor(private cashierService: CashierService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getAlLCashiers(@Request() req: any) {
+    const user: JwtPayload = req.user;
+    return this.cashierService.getAllCashiers({ userId: user.id });
+  }
+
+  @Get(':id')
+  async getCashierById(@Param('id') id: string) {
+    return this.cashierService.getCashierById({ id });
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post('create')

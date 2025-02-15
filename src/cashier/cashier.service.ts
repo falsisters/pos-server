@@ -8,6 +8,32 @@ import { CashierPermission } from '@prisma/client';
 export class CashierService {
   constructor(private jwtService: JwtService) {}
 
+  async getAllCashiers(data: { userId: string }) {
+    const { userId } = data;
+
+    return prisma.cashier.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        permissions: true,
+      },
+    });
+  }
+
+  async getCashierById(data: { id: string }) {
+    const { id } = data;
+
+    return prisma.cashier.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        permissions: true,
+      },
+    });
+  }
+
   async validateCashier(data: { name: string; accessKey: string }) {
     const { name, accessKey } = data;
 
@@ -55,8 +81,19 @@ export class CashierService {
     });
   }
 
-  async editCashier(data: { id: string; name?: string; accessKey?: string }) {
-    const { id, name, accessKey } = data;
+  async editCashier(data: {
+    id: string;
+    name?: string;
+    accessKey?: string;
+    permissions?: Partial<CashierPermission[]>;
+  }) {
+    const { id, name, accessKey, permissions } = data;
+
+    await prisma.cashierPermission.deleteMany({
+      where: {
+        cashierId: id,
+      },
+    });
 
     return prisma.cashier.update({
       where: {
@@ -65,6 +102,11 @@ export class CashierService {
       data: {
         name,
         accessKey,
+        permissions: {
+          create: permissions.map((p) => ({
+            name: p.name,
+          })),
+        },
       },
     });
   }

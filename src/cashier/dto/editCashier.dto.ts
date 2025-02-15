@@ -1,4 +1,10 @@
-import { IsNumberString, IsOptional, IsString } from 'class-validator';
+import { CashierPermission } from '@prisma/client';
+import {
+  IsNotEmpty,
+  IsNumberString,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class EditCashierDto {
   @IsString()
@@ -11,4 +17,7 @@ export class EditCashierDto {
   @IsNumberString()
   @IsOptional()
   accessKey: string;
+
+  @IsNotEmpty()
+  permissions: Partial<CashierPermission[]>;
 }

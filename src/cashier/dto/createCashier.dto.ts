@@ -11,9 +11,6 @@ export class CreateCashierDto {
   name: string;
 
   @IsString()
-  userId: string;
-
-  @IsString()
   @IsNumberString()
   @MaxLength(4)
   accessKey: string;

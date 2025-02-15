@@ -27,10 +27,6 @@ export class AuthService {
     return this.login(user);
   }
 
-  async getUserData(data: { access_token: string }) {
-    return this.jwtService.decode(data.access_token);
-  }
-
   private async login(user: User) {
     const payload = { email: user.email, id: user.id, name: user.name };
     return {

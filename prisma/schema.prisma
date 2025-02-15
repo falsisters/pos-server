@@ -121,6 +121,7 @@ enum ProductType {
   FIVE_KG
   PER_KILO
   GANTANG
+  SPECIAL_PRICE
 }
 
 model Profit {

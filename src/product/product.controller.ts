@@ -40,9 +40,7 @@ export class ProductController {
     const user: JwtPayload = req.user;
     return this.productService.createProduct({
       user,
-      product: createProductDto.product,
-      price: createProductDto.price,
-      profit: createProductDto.profit,
+      product: createProductDto,
     });
   }
 
@@ -50,9 +48,7 @@ export class ProductController {
   async editProduct(@Param('id') id, @Body() editProductDto: EditProductDto) {
     return this.productService.editProduct({
       id,
-      product: editProductDto.product,
-      price: editProductDto.price,
-      profit: editProductDto.profit,
+      product: editProductDto,
     });
   }
 

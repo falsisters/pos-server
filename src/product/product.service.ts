@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Price, Product, Profit } from '@prisma/client';
-import { AuthService } from 'src/auth/auth.service';
 import { JwtPayload } from 'src/auth/jwt/jwt.type';
 import { prisma } from 'src/prisma';
+import { CreateProductDto } from './dto/createProduct.dto';
+import { EditProductDto } from './dto/editProduct.dto';
 
 @Injectable()
 export class ProductService {
-  constructor(private authService: AuthService) {}
-
   async getAllProductsByUserId(data: { userId: string }) {
     const { userId } = data;
     return prisma.product.findMany({
@@ -40,13 +38,8 @@ export class ProductService {
     });
   }
 
-  async createProduct(data: {
-    user: JwtPayload;
-    product: Partial<Product>;
-    price: Partial<Price[]>;
-    profit: Partial<Profit[]>;
-  }) {
-    const { user, product, price, profit } = data;
+  async createProduct(data: { user: JwtPayload; product: CreateProductDto }) {
+    const { user, product } = data;
     const { name, stock, minimumQty } = product;
 
     return prisma.product.create({
@@ -56,11 +49,11 @@ export class ProductService {
         minimumQty,
         userId: user.id,
         Price: {
-          create: price.map((p) => ({
+          create: product.price.map((p) => ({
             price: p.price,
             type: p.type,
             Profit: {
-              create: profit.map((pr) => ({
+              create: p.profit.map((pr) => ({
                 profit: pr.profit,
               })),
             },
@@ -77,41 +70,17 @@ export class ProductService {
     });
   }
 
-  async editProduct(data: {
-    id: string;
-    product: Partial<Product>;
-    price: Partial<Price[]>;
-    profit: Partial<Profit[]>;
-  }) {
-    const { product, price, profit, id } = data;
+  async editProduct(data: { id: string; product: EditProductDto }) {
+    const { id, product } = data;
     const { name, stock, minimumQty } = product;
 
-    // Update prices related to the product
-    price.map(async (p) => {
-      await prisma.price.update({
-        where: {
-          id: p.id,
-        },
-        data: {
-          price: p.price,
-        },
-      });
-
-      // Update profits related to that price
-      profit.map(async (pr) => {
-        await prisma.profit.update({
-          where: {
-            id: pr.id,
-          },
-          data: {
-            profit: pr.profit,
-          },
-        });
-      });
+    await prisma.price.deleteMany({
+      where: {
+        productId: id,
+      },
     });
 
-    // Update product last and return
-    return await prisma.product.update({
+    return prisma.product.update({
       where: {
         id,
       },
@@ -119,6 +88,17 @@ export class ProductService {
         name,
         stock,
         minimumQty,
+        Price: {
+          create: product.price.map((p) => ({
+            price: p.price,
+            type: p.type,
+            Profit: {
+              create: p.profit.map((pr) => ({
+                profit: pr.profit,
+              })),
+            },
+          })),
+        },
       },
       include: {
         Price: {

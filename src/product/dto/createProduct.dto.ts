@@ -1,13 +1,32 @@
-import { Price, Product, Profit } from '@prisma/client';
-import { IsNotEmptyObject } from 'class-validator';
+import { IsArray, IsNotEmpty } from 'class-validator';
+import { ProductType } from '@prisma/client';
 
 export class CreateProductDto {
-  @IsNotEmptyObject()
-  product: Partial<Product>;
+  @IsNotEmpty()
+  name: string;
 
-  @IsNotEmptyObject()
-  price: Partial<Price[]>;
+  @IsNotEmpty()
+  stock: number;
 
-  @IsNotEmptyObject()
-  profit: Partial<Profit[]>;
+  @IsNotEmpty()
+  minimumQty: number;
+
+  @IsArray()
+  price: PriceDto[];
+}
+
+class PriceDto {
+  @IsNotEmpty()
+  price: number;
+
+  @IsNotEmpty()
+  type: ProductType;
+
+  @IsArray()
+  profit: ProfitDto[];
+}
+
+class ProfitDto {
+  @IsNotEmpty()
+  profit: number;
 }

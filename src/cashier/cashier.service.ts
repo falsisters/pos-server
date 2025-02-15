@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { prisma } from 'src/prisma';
 import { CashierWithPermissions } from './cashier.type';
+import { CashierPermission } from '@prisma/client';
 
 @Injectable()
 export class CashierService {
@@ -36,14 +37,20 @@ export class CashierService {
     name: string;
     userId: string;
     accessKey: string;
+    permission: Partial<CashierPermission[]>;
   }) {
-    const { name, userId, accessKey } = data;
+    const { name, userId, accessKey, permission } = data;
 
     return prisma.cashier.create({
       data: {
         name,
         userId,
         accessKey,
+        permissions: {
+          create: permission.map((p) => ({
+            name: p.name,
+          })),
+        },
       },
     });
   }

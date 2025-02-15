@@ -1,4 +1,7 @@
+import { CashierPermission } from '@prisma/client';
 import {
+  IsArray,
+  IsNotEmpty,
   IsNumberString,
   IsString,
   MaxLength,
@@ -14,4 +17,8 @@ export class CreateCashierDto {
   @IsNumberString()
   @MaxLength(4)
   accessKey: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  permissions: Partial<CashierPermission[]>;
 }

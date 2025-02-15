@@ -29,6 +29,7 @@ export class CashierController {
     return this.cashierService.createCashier({
       name: createCashierDto.name,
       accessKey: createCashierDto.accessKey,
+      permission: createCashierDto.permissions,
       userId: user.id,
     });
   }

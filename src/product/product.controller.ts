@@ -20,15 +20,15 @@ export class ProductController {
   constructor(private productService: ProductService) {}
 
   @Get(':id')
-  async getAllProductsById(@Param('id') id: string) {
+  async getProductById(@Param('id') id: string) {
     return this.productService.getProductById({ id });
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getProductByUserId(@Request() req) {
+  async getAllProductsByUserId(@Request() req) {
     const user: JwtPayload = req.user;
-    return this.getAllProductsById(user.id);
+    return this.productService.getAllProductsByUserId({ userId: user.id });
   }
 
   @UseGuards(JwtAuthGuard)

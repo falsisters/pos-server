@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Post,
   Put,
   Request,
@@ -12,6 +13,7 @@ import { LoginAsCashierDto } from './dto/loginAsCashier.dto';
 import { EditCashierDto } from './dto/editCashier.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { JwtPayload } from 'src/auth/jwt/jwt.type';
+import { DeleteCashierDto } from './dto/deleteCashier.dto';
 
 @Controller('cashier')
 export class CashierController {
@@ -29,6 +31,12 @@ export class CashierController {
       accessKey: createCashierDto.accessKey,
       userId: user.id,
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete()
+  async deleteCashier(@Body() deleteCashierDto: DeleteCashierDto) {
+    return this.cashierService.deleteCashier(deleteCashierDto);
   }
 
   @Post()

@@ -22,6 +22,16 @@ export class CashierService {
     return this.verifyAccessKey(accessKey, cashier);
   }
 
+  async deleteCashier(data: { id: string }) {
+    const { id } = data;
+
+    return prisma.cashier.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
   async createCashier(data: {
     name: string;
     userId: string;

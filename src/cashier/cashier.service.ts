@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { prisma } from 'src/prisma';
+import { prisma } from '../prisma';
 import { CashierWithPermissions } from './cashier.type';
 import { CashierPermission } from '@prisma/client';
 

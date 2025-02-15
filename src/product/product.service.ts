@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtPayload } from 'src/auth/jwt/jwt.type';
-import { prisma } from 'src/prisma';
+import { prisma } from '../prisma';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { EditProductDto } from './dto/editProduct.dto';
 

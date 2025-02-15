@@ -6,6 +6,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CashierStrategy } from './cashier.strategy';
 import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -17,6 +18,12 @@ import { AuthService } from 'src/auth/auth.service';
     }),
   ],
   controllers: [CashierController],
-  providers: [CashierService, CashierStrategy, JwtService, AuthService],
+  providers: [
+    CashierService,
+    CashierStrategy,
+    JwtService,
+    AuthService,
+    UserService,
+  ],
 })
 export class CashierModule {}

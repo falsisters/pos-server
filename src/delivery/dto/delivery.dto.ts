@@ -5,6 +5,9 @@ export class CreateDeliveryDto {
   @IsNotEmpty()
   total: number;
 
+  @IsNotEmpty()
+  driver: string;
+
   @IsArray()
   deliveryItems: DeliveryItemDto[];
 
@@ -31,6 +34,9 @@ export class DeliveryItemDto {
 export class EditDeliveryDto {
   @IsNotEmpty()
   total: number;
+
+  @IsNotEmpty()
+  driver: string;
 
   @IsArray()
   deliveryItems: DeliveryItemDto[];

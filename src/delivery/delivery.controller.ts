@@ -65,6 +65,12 @@ export class DeliveryController {
     return this.deliveryService.getAllDeliveriesByUserId({ userId: user.id });
   }
 
+  @UseGuards(CashierAuthGuard)
+  @Put('finish/:id')
+  async finishDelivery(@Param('id') id: string) {
+    return this.deliveryService.finishDelivery({ id });
+  }
+
   @Get(':id')
   async getDeliveryById(@Param('id') id: string) {
     return this.deliveryService.getDeliveryById({ id });

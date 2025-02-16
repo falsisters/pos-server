@@ -6,7 +6,7 @@ import { CreateDeliveryDto, EditDeliveryDto } from './dto/delivery.dto';
 export class DeliveryService {
   async createDelivery(data: { id: string; delivery: CreateDeliveryDto }) {
     const { id, delivery } = data;
-    const { total, deliveryItems, attachments } = delivery;
+    const { total, deliveryItems, attachments, driver } = delivery;
 
     return prisma.$transaction(
       async (tx) => {
@@ -36,6 +36,7 @@ export class DeliveryService {
           data: {
             cashierId: id,
             total,
+            driver,
             attachments: attachments || [],
             items: {
               create: deliveryItems.map((item) => ({
@@ -65,7 +66,7 @@ export class DeliveryService {
 
   async editDelivery(data: { id: string; delivery: EditDeliveryDto }) {
     const { id, delivery } = data;
-    const { total, deliveryItems, attachments } = delivery;
+    const { total, deliveryItems, attachments, driver } = delivery;
 
     return prisma.$transaction(
       async (tx) => {
@@ -124,6 +125,7 @@ export class DeliveryService {
           where: { id },
           data: {
             total,
+            driver,
             attachments: attachments || [],
             items: {
               create: deliveryItems.map((item) => ({
@@ -247,6 +249,18 @@ export class DeliveryService {
           },
         },
         cashier: true,
+      },
+    });
+  }
+
+  async finishDelivery(data: { id: string }) {
+    const { id } = data;
+    const dateNow = new Date();
+    return prisma.delivery.update({
+      where: { id },
+      data: {
+        timeFinished: dateNow,
+        isFinished: true,
       },
     });
   }

@@ -19,6 +19,7 @@ import { EditProductDto } from './dto/editProduct.dto';
 export class ProductController {
   constructor(private productService: ProductService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getProductById(@Param('id') id: string) {
     return this.productService.getProductById({ id });
@@ -44,6 +45,7 @@ export class ProductController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async editProduct(@Param('id') id, @Body() editProductDto: EditProductDto) {
     return this.productService.editProduct({
@@ -52,6 +54,7 @@ export class ProductController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteProduct(@Param('id') id) {
     return this.productService.deleteProduct({ id });

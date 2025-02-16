@@ -11,7 +11,7 @@ import { UserService } from 'src/user/user.service';
 @Module({
   imports: [
     AuthModule,
-    PassportModule.register({ defaultStrategy: 'cashier-strategy' }),
+    PassportModule.register({ defaultStrategy: 'cashier' }),
     JwtModule.register({
       secret: `${process.env.JWT_CASHIER_SECRET}`,
       signOptions: { expiresIn: '16h' },
@@ -21,8 +21,8 @@ import { UserService } from 'src/user/user.service';
   providers: [
     CashierService,
     CashierStrategy,
-    JwtService,
     AuthService,
+    JwtService,
     UserService,
   ],
 })

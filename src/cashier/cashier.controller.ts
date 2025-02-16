@@ -16,6 +16,7 @@ import { EditCashierDto } from './dto/editCashier.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { JwtPayload } from 'src/auth/jwt/jwt.type';
 import { DeleteCashierDto } from './dto/deleteCashier.dto';
+import { CashierAuthGuard } from './cashier.guard';
 
 @Controller('cashier')
 export class CashierController {
@@ -26,6 +27,13 @@ export class CashierController {
   async getAlLCashiers(@Request() req: any) {
     const user: JwtPayload = req.user;
     return this.cashierService.getAllCashiers({ userId: user.id });
+  }
+
+  @UseGuards(CashierAuthGuard)
+  @Get('info')
+  async getCashierInfo(@Request() req: any) {
+    const cashier = req.user;
+    return cashier;
   }
 
   @Get(':id')

@@ -116,7 +116,7 @@ export class CashierService {
     cashier: CashierWithPermissions,
   ) {
     if (accessKey === cashier.accessKey) {
-      this.login(cashier);
+      return this.login(cashier);
     }
   }
 
@@ -126,10 +126,14 @@ export class CashierService {
       name: cashier.name,
       permissions: cashier.permissions,
     };
-    return {
+
+    const cashierToken = {
       access_token: this.jwtService.sign(payload),
       name: cashier.name,
-      permissions: cashier.permissions,
     };
+
+    console.log(cashierToken);
+
+    return cashierToken;
   }
 }

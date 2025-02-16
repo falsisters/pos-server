@@ -3,10 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
-export class CashierStrategy extends PassportStrategy(
-  Strategy,
-  'cashier-strategy',
-) {
+export class CashierStrategy extends PassportStrategy(Strategy, 'cashier') {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

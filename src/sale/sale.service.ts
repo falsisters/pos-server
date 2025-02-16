@@ -7,22 +7,20 @@ import { EditSaleDto } from './dto/editSale.dto';
 export class SaleService {
   async getAllSalesByUserId(data: { id: string }) {
     const { id } = data;
-    return prisma.user.findMany({
+
+    return prisma.sale.findMany({
       where: {
-        id,
+        cashier: {
+          user: {
+            id,
+          },
+        },
       },
       include: {
-        Cashier: {
+        cashier: true,
+        items: {
           include: {
-            Sale: {
-              include: {
-                items: {
-                  include: {
-                    product: true,
-                  },
-                },
-              },
-            },
+            product: true,
           },
         },
       },

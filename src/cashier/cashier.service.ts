@@ -132,8 +132,6 @@ export class CashierService {
       name: cashier.name,
     };
 
-    console.log(cashierToken);
-
     return cashierToken;
   }
 }

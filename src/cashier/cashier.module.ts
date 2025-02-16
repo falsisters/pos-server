@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CashierController } from './cashier.controller';
 import { CashierService } from './cashier.service';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { CashierStrategy } from './cashier.strategy';
 import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
@@ -18,12 +18,6 @@ import { UserService } from 'src/user/user.service';
     }),
   ],
   controllers: [CashierController],
-  providers: [
-    CashierService,
-    CashierStrategy,
-    AuthService,
-    JwtService,
-    UserService,
-  ],
+  providers: [CashierService, CashierStrategy, AuthService, UserService],
 })
 export class CashierModule {}

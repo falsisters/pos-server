@@ -51,4 +51,10 @@ export class SaleController {
   async deleteSale(@Param('id') id: string) {
     return this.saleService.deleteSale({ id });
   }
+
+  @UseGuards(CashierAuthGuard)
+  @Delete('cashier/:id')
+  async deleteSaleAsCashier(@Param('id') id: string) {
+    return this.saleService.deleteSale({ id });
+  }
 }

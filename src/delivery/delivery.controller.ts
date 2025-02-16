@@ -43,7 +43,7 @@ export class DeliveryController {
     });
   }
 
-  @UseGuards(CashierAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteDelivery(@Param('id') id: string) {
     return this.deliveryService.deleteDelivery({ id });

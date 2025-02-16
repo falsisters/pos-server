@@ -164,14 +164,17 @@ model SaleItem {
 }
 
 model Delivery {
-  id          String         @id @default(cuid())
-  cashierId   String
-  cashier     Cashier        @relation(fields: [cashierId], references: [id], onDelete: Cascade)
-  total       Float
-  items       DeliveryItem[]
-  attachments String[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id           String         @id @default(cuid())
+  cashierId    String
+  cashier      Cashier        @relation(fields: [cashierId], references: [id], onDelete: Cascade)
+  total        Float
+  items        DeliveryItem[]
+  driver       String         @default("None")
+  timeFinished DateTime       @default(now())
+  isFinished   Boolean        @default(false)
+  attachments  String[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model DeliveryItem {

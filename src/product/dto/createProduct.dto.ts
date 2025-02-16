@@ -6,9 +6,6 @@ export class CreateProductDto {
   name: string;
 
   @IsNotEmpty()
-  stock: number;
-
-  @IsNotEmpty()
   minimumQty: number;
 
   @IsArray()
@@ -18,6 +15,9 @@ export class CreateProductDto {
 class PriceDto {
   @IsNotEmpty()
   price: number;
+
+  @IsNotEmpty()
+  stock: number;
 
   @IsNotEmpty()
   type: ProductType;

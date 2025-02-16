@@ -40,18 +40,18 @@ export class ProductService {
 
   async createProduct(data: { user: JwtPayload; product: CreateProductDto }) {
     const { user, product } = data;
-    const { name, stock, minimumQty } = product;
+    const { name, minimumQty } = product;
 
     return prisma.product.create({
       data: {
         name,
-        stock,
         minimumQty,
         userId: user.id,
         Price: {
           create: product.price.map((p) => ({
             price: p.price,
             type: p.type,
+            stock: p.stock,
             Profit: {
               create: p.profit.map((pr) => ({
                 profit: pr.profit,
@@ -72,7 +72,7 @@ export class ProductService {
 
   async editProduct(data: { id: string; product: EditProductDto }) {
     const { id, product } = data;
-    const { name, stock, minimumQty } = product;
+    const { name, minimumQty } = product;
 
     await prisma.price.deleteMany({
       where: {
@@ -86,11 +86,11 @@ export class ProductService {
       },
       data: {
         name,
-        stock,
         minimumQty,
         Price: {
           create: product.price.map((p) => ({
             price: p.price,
+            stock: p.stock,
             type: p.type,
             Profit: {
               create: p.profit.map((pr) => ({

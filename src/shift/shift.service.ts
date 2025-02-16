@@ -64,4 +64,22 @@ export class ShiftService {
       },
     });
   }
+
+  async getAllShiftsByCashierId(data: { id: string }) {
+    const { id } = data;
+    return prisma.shift.findMany({
+      where: {
+        cashierId: id,
+      },
+    });
+  }
+
+  async getShiftById(data: { id: string }) {
+    const { id } = data;
+    return prisma.shift.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 }

@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Patch, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ShiftService } from './shift.service';
 import { CreateShiftDto } from './dto/createShift.dto';
 import { ClockShiftDto } from './dto/clockShift.dto';
@@ -8,6 +17,16 @@ import { EditShiftDto } from './dto/editShift.dto';
 @Controller('shift')
 export class ShiftController {
   constructor(private shiftService: ShiftService) {}
+
+  @Get('cashier/:id')
+  async getAllShiftsByCashierId(@Param('id') id: string) {
+    return this.shiftService.getAllShiftsByCashierId({ id });
+  }
+
+  @Get(':id')
+  async getShiftById(@Param('id') id: string) {
+    return this.shiftService.getShiftById({ id });
+  }
 
   @Post()
   async createShift(@Body() createShiftDto: CreateShiftDto) {

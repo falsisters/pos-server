@@ -91,7 +91,6 @@ model Shift {
 model Product {
   id           String         @id @default(cuid())
   name         String
-  stock        Int
   minimumQty   Int            @default(1)
   SaleItem     SaleItem[]
   DeliveryItem DeliveryItem[]
@@ -107,6 +106,7 @@ model Product {
 model Price {
   id        String      @id @default(cuid())
   price     Float
+  stock     Int
   type      ProductType
   productId String
   product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)

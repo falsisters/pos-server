@@ -175,15 +175,16 @@ model Delivery {
 }
 
 model DeliveryItem {
-  id         String   @id @default(cuid())
+  id         String      @id @default(cuid())
   deliveryId String
-  delivery   Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  delivery   Delivery    @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
   productId  String
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   qty        Int
   price      Float
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  type       ProductType
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
 
 model Transfer {

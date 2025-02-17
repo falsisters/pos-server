@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { prisma } from '../prisma';
-import { CashierWithPermissions } from './cashier.type';
+import { CashierJwtPayload, CashierWithPermissions } from './cashier.type';
 import { CashierPermission } from '@prisma/client';
 
 @Injectable()
@@ -121,9 +121,10 @@ export class CashierService {
   }
 
   private async login(cashier: CashierWithPermissions) {
-    const payload = {
+    const payload: CashierJwtPayload = {
       id: cashier.id,
       name: cashier.name,
+      userId: cashier.userId,
       permissions: cashier.permissions,
     };
 

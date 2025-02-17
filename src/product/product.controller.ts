@@ -14,6 +14,12 @@ import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { JwtPayload } from 'src/auth/jwt/jwt.type';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { EditProductDto } from './dto/editProduct.dto';
+import { CashierAuthGuard } from 'src/cashier/cashier.guard';
+import { CashierJwtPayload } from 'src/cashier/cashier.type';
+import {
+  PermissionGuard,
+  RequirePermission,
+} from 'src/permission/permission.guard';
 
 @Controller('product')
 export class ProductController {
@@ -32,6 +38,13 @@ export class ProductController {
     return this.productService.getAllProductsByUserId({ userId: user.id });
   }
 
+  @UseGuards(CashierAuthGuard)
+  @Get()
+  async getAllProductsByUserIdForCashier(@Request() req) {
+    const user: CashierJwtPayload = req.user;
+    return this.productService.getAllProductsByUserId({ userId: user.userId });
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('create')
   async createProduct(
@@ -48,6 +61,19 @@ export class ProductController {
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   async editProduct(@Param('id') id, @Body() editProductDto: EditProductDto) {
+    return this.productService.editProduct({
+      id,
+      product: editProductDto,
+    });
+  }
+
+  @UseGuards(CashierAuthGuard, PermissionGuard)
+  @RequirePermission('STOCKS')
+  @Put('cashier/:id')
+  async editCashierProduct(
+    @Param('id') id,
+    @Body() editProductDto: EditProductDto,
+  ) {
     return this.productService.editProduct({
       id,
       product: editProductDto,

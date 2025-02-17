@@ -13,12 +13,17 @@ import { DeliveryService } from './delivery.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CreateDeliveryDto, EditDeliveryDto } from './dto/delivery.dto';
 import { CashierAuthGuard } from 'src/cashier/cashier.guard';
+import {
+  PermissionGuard,
+  RequirePermission,
+} from 'src/permission/permission.guard';
 
 @Controller('delivery')
 export class DeliveryController {
   constructor(private readonly deliveryService: DeliveryService) {}
 
-  @UseGuards(CashierAuthGuard)
+  @UseGuards(CashierAuthGuard, PermissionGuard)
+  @RequirePermission('DELIVERIES')
   @Post('create')
   async createDelivery(
     @Request() req,
@@ -31,7 +36,8 @@ export class DeliveryController {
     });
   }
 
-  @UseGuards(CashierAuthGuard)
+  @UseGuards(CashierAuthGuard, PermissionGuard)
+  @RequirePermission('DELIVERIES')
   @Put(':id')
   async editDelivery(
     @Param('id') id: string,
@@ -49,7 +55,8 @@ export class DeliveryController {
     return this.deliveryService.deleteDelivery({ id });
   }
 
-  @UseGuards(CashierAuthGuard)
+  @UseGuards(CashierAuthGuard, PermissionGuard)
+  @RequirePermission('DELIVERIES')
   @Get('cashier')
   async getAllDeliveriesByCashierId(@Request() req: any) {
     const user = req.user;
@@ -65,7 +72,18 @@ export class DeliveryController {
     return this.deliveryService.getAllDeliveriesByUserId({ userId: user.id });
   }
 
-  @UseGuards(CashierAuthGuard)
+  @UseGuards(CashierAuthGuard, PermissionGuard)
+  @RequirePermission('DELIVERIES')
+  @Get('cashier')
+  async getAllCashierDeliveriesByUserId(@Request() req: any) {
+    const user = req.user;
+    return this.deliveryService.getAllDeliveriesByUserId({
+      userId: user.userId,
+    });
+  }
+
+  @UseGuards(CashierAuthGuard, PermissionGuard)
+  @RequirePermission('DELIVERIES')
   @Put('finish/:id')
   async finishDelivery(@Param('id') id: string) {
     return this.deliveryService.finishDelivery({ id });

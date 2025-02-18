@@ -22,6 +22,22 @@ export class ProductService {
     });
   }
 
+  async getAllProductsByCashierId(data: { userId: string }) {
+    const { userId } = data;
+    return prisma.product.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        Price: {
+          include: {
+            Profit: true,
+          },
+        },
+      },
+    });
+  }
+
   async getProductById(data: { id: string }) {
     const { id } = data;
     return prisma.product.findUnique({

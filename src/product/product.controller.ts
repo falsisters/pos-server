@@ -39,7 +39,7 @@ export class ProductController {
   }
 
   @UseGuards(CashierAuthGuard)
-  @Get()
+  @Get('cashier')
   async getAllProductsByUserIdForCashier(@Request() req) {
     const user: CashierJwtPayload = req.user;
     return this.productService.getAllProductsByUserId({ userId: user.userId });

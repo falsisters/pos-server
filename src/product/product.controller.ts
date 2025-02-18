@@ -19,7 +19,7 @@ import { CashierJwtPayload } from 'src/cashier/cashier.type';
 import {
   PermissionGuard,
   RequirePermission,
-} from 'src/permission/permission.guard';
+} from '../permission/permission.guard';
 
 @Controller('product')
 export class ProductController {

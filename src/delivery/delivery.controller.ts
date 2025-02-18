@@ -16,7 +16,7 @@ import { CashierAuthGuard } from 'src/cashier/cashier.guard';
 import {
   PermissionGuard,
   RequirePermission,
-} from 'src/permission/permission.guard';
+} from '../permission/permission.guard';
 
 @Controller('delivery')
 export class DeliveryController {

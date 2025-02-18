@@ -6,13 +6,16 @@ export class ShiftService {
   async createShift(data: { cashierId: string; employee: string }) {
     const { cashierId, employee } = data;
     const dateNow = new Date().toISOString();
+    const dateThreeDaysFromNow = new Date(
+      Date.now() + 3 * 24 * 60 * 60 * 1000,
+    ).toISOString();
 
     return prisma.shift.create({
       data: {
         cashierId,
         employee,
         clockIn: dateNow,
-        clockOut: dateNow,
+        clockOut: dateThreeDaysFromNow,
       },
     });
   }

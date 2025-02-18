@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { prisma } from 'src/prisma';
+import { prisma } from '../prisma';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

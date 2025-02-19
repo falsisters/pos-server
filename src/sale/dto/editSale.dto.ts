@@ -24,4 +24,7 @@ class SaleItemDto {
 
   @IsNotEmpty()
   type: ProductType;
+
+  @IsNotEmpty()
+  isSpecialPrice: boolean;
 }

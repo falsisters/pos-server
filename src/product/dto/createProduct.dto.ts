@@ -5,9 +5,6 @@ export class CreateProductDto {
   @IsNotEmpty()
   name: string;
 
-  @IsNotEmpty()
-  minimumQty: number;
-
   @IsArray()
   price: PriceDto[];
 }
@@ -24,9 +21,20 @@ class PriceDto {
 
   @IsArray()
   profit: ProfitDto[];
+
+  @IsArray()
+  specialPrice: SpecialPrice[];
 }
 
 class ProfitDto {
   @IsNotEmpty()
   profit: number;
+}
+
+class SpecialPrice {
+  @IsNotEmpty()
+  specialPrice: number;
+
+  @IsNotEmpty()
+  minimumQty: number;
 }

@@ -99,6 +99,7 @@ export class SaleService {
                 qty: item.qty,
                 price: item.price,
                 type: item.type,
+                isSpecialPrice: item.isSpecialPrice,
                 product: {
                   connect: { id: item.productId },
                 },
@@ -191,6 +192,7 @@ export class SaleService {
                 qty: item.qty,
                 price: item.price,
                 type: item.type,
+                isSpecialPrice: item.isSpecialPrice,
                 product: {
                   connect: { id: item.productId },
                 },

@@ -16,6 +16,7 @@ export class ProductService {
         Price: {
           include: {
             Profit: true,
+            SpecialPrice: true,
           },
         },
       },
@@ -43,6 +44,7 @@ export class ProductService {
         Price: {
           include: {
             Profit: true,
+            SpecialPrice: true,
           },
         },
       },
@@ -59,6 +61,7 @@ export class ProductService {
         Price: {
           include: {
             Profit: true,
+            SpecialPrice: true,
           },
         },
       },
@@ -67,12 +70,11 @@ export class ProductService {
 
   async createProduct(data: { user: JwtPayload; product: CreateProductDto }) {
     const { user, product } = data;
-    const { name, minimumQty } = product;
+    const { name } = product;
 
     return prisma.product.create({
       data: {
         name,
-        minimumQty,
         userId: user.id,
         Price: {
           create: product.price.map((p) => ({
@@ -84,6 +86,12 @@ export class ProductService {
                 profit: pr.profit,
               })),
             },
+            SpecialPrice: {
+              create: p.specialPrice.map((sp) => ({
+                specialPrice: sp.specialPrice,
+                minimumQty: sp.minimumQty,
+              })),
+            },
           })),
         },
       },
@@ -91,6 +99,7 @@ export class ProductService {
         Price: {
           include: {
             Profit: true,
+            SpecialPrice: true,
           },
         },
       },
@@ -99,7 +108,7 @@ export class ProductService {
 
   async editProduct(data: { id: string; product: EditProductDto }) {
     const { id, product } = data;
-    const { name, minimumQty } = product;
+    const { name } = product;
 
     await prisma.price.deleteMany({
       where: {
@@ -113,7 +122,6 @@ export class ProductService {
       },
       data: {
         name,
-        minimumQty,
         Price: {
           create: product.price.map((p) => ({
             price: p.price,
@@ -124,6 +132,12 @@ export class ProductService {
                 profit: pr.profit,
               })),
             },
+            SpecialPrice: {
+              create: p.specialPrice.map((sp) => ({
+                specialPrice: sp.specialPrice,
+                minimumQty: sp.minimumQty,
+              })),
+            },
           })),
         },
       },
@@ -131,6 +145,7 @@ export class ProductService {
         Price: {
           include: {
             Profit: true,
+            SpecialPrice: true,
           },
         },
       },

@@ -13,6 +13,7 @@ import { BreakdownModule } from './breakdown/breakdown.module';
 import { ExpenseModule } from './expense/expense.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { StockModule } from './stock/stock.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AuthModule } from './auth/auth.module';
       envFilePath: '.env',
     }),
     AuthModule,
+    StockModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -25,6 +25,28 @@ import {
 export class ProductController {
   constructor(private productService: ProductService) {}
 
+  @UseGuards(CashierAuthGuard)
+  @Get('cashier')
+  async getAllProductsByUserIdForCashier(@Request() req) {
+    const user: CashierJwtPayload = req.user;
+    return this.productService.getAllProductsByCashierId({
+      cashierId: user.id,
+    });
+  }
+
+  @UseGuards(CashierAuthGuard, PermissionGuard)
+  @RequirePermission('STOCKS')
+  @Put('cashier/:id')
+  async editCashierProduct(
+    @Param('id') id,
+    @Body() editProductDto: EditProductDto,
+  ) {
+    return this.productService.editProduct({
+      id,
+      product: editProductDto,
+    });
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getProductById(@Param('id') id: string) {
@@ -36,13 +58,6 @@ export class ProductController {
   async getAllProductsByUserId(@Request() req) {
     const user: JwtPayload = req.user;
     return this.productService.getAllProductsByUserId({ userId: user.id });
-  }
-
-  @UseGuards(CashierAuthGuard)
-  @Get('cashier')
-  async getAllProductsByUserIdForCashier(@Request() req) {
-    const user: CashierJwtPayload = req.user;
-    return this.productService.getAllProductsByUserId({ userId: user.userId });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -61,19 +76,6 @@ export class ProductController {
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   async editProduct(@Param('id') id, @Body() editProductDto: EditProductDto) {
-    return this.productService.editProduct({
-      id,
-      product: editProductDto,
-    });
-  }
-
-  @UseGuards(CashierAuthGuard, PermissionGuard)
-  @RequirePermission('STOCKS')
-  @Put('cashier/:id')
-  async editCashierProduct(
-    @Param('id') id,
-    @Body() editProductDto: EditProductDto,
-  ) {
     return this.productService.editProduct({
       id,
       product: editProductDto,

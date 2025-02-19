@@ -22,11 +22,22 @@ export class ProductService {
     });
   }
 
-  async getAllProductsByCashierId(data: { userId: string }) {
-    const { userId } = data;
+  async getAllProductsByCashierId(data: { cashierId: string }) {
+    const { cashierId } = data;
+
+    const user = await prisma.user.findFirst({
+      where: {
+        Cashier: {
+          some: {
+            id: cashierId,
+          },
+        },
+      },
+    });
+
     return prisma.product.findMany({
       where: {
-        userId,
+        userId: user.id,
       },
       include: {
         Price: {

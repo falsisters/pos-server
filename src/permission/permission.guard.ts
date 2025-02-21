@@ -36,7 +36,7 @@ export class PermissionGuard implements CanActivate {
 
     if (!hasPermission) {
       throw new UnauthorizedException(
-        `Missing required permission: ${requiredPermission}`,
+        `You don't have permission to perform this action`,
       );
     }
 

@@ -5,8 +5,17 @@ export class CreateProductDto {
   @IsNotEmpty()
   name: string;
 
+  @IsNotEmpty()
+  upload: Upload;
+
   @IsArray()
   price: PriceDto[];
+}
+
+class Upload {
+  fileName: string;
+  path: string;
+  file: Express.Multer.File;
 }
 
 class PriceDto {

@@ -14,6 +14,7 @@ import { ExpenseModule } from './expense/expense.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { StockModule } from './stock/stock.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { StockModule } from './stock/stock.module';
     }),
     AuthModule,
     StockModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

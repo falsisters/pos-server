@@ -3,9 +3,12 @@ import { JwtPayload } from 'src/auth/jwt/jwt.type';
 import { prisma } from '../prisma';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { EditProductDto } from './dto/editProduct.dto';
+import { UploadService } from 'src/upload/upload.service';
 
 @Injectable()
 export class ProductService {
+  constructor(private uploadService: UploadService) {}
+
   async getAllProductsByUserId(data: { userId: string }) {
     const { userId } = data;
     return prisma.product.findMany({
@@ -72,9 +75,12 @@ export class ProductService {
     const { user, product } = data;
     const { name } = product;
 
+    const url = await this.uploadService.uploadSingleFile(product.upload);
+
     return prisma.product.create({
       data: {
         name,
+        picture: url,
         userId: user.id,
         Price: {
           create: product.price.map((p) => ({
@@ -110,6 +116,8 @@ export class ProductService {
     const { id, product } = data;
     const { name } = product;
 
+    const url = await this.uploadService.uploadSingleFile(product.picture);
+
     await prisma.price.deleteMany({
       where: {
         productId: id,
@@ -122,6 +130,7 @@ export class ProductService {
       },
       data: {
         name,
+        picture: url,
         Price: {
           create: product.price.map((p) => ({
             price: p.price,

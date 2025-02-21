@@ -8,9 +8,11 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthModule } from 'src/auth/auth.module';
 import { CashierModule } from 'src/cashier/cashier.module';
 import { UserModule } from 'src/user/user.module';
+import { UploadModule } from 'src/upload/upload.module';
+import { UploadService } from 'src/upload/upload.service';
 
 @Module({
-  imports: [AuthModule, CashierModule, UserModule],
+  imports: [AuthModule, CashierModule, UserModule, UploadModule],
   controllers: [DeliveryController],
   providers: [
     DeliveryService,
@@ -18,6 +20,7 @@ import { UserModule } from 'src/user/user.module';
     CashierService,
     UserService,
     JwtService,
+    UploadService,
   ],
 })
 export class DeliveryModule {}

@@ -1,5 +1,5 @@
 import { ProductType } from '@prisma/client';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateDeliveryDto {
   @IsNotEmpty()
@@ -12,9 +12,13 @@ export class CreateDeliveryDto {
   deliveryItems: DeliveryItemDto[];
 
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  attachments?: string[];
+  attachments: Upload[];
+}
+
+export class Upload {
+  fileName: string;
+  path: string;
+  file: Express.Multer.File;
 }
 
 export class DeliveryItemDto {
@@ -42,7 +46,5 @@ export class EditDeliveryDto {
   deliveryItems: DeliveryItemDto[];
 
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  attachments?: string[];
+  attachments: Upload[];
 }

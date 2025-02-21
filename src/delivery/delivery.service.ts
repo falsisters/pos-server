@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { prisma } from '../prisma';
 import { CreateDeliveryDto, EditDeliveryDto } from './dto/delivery.dto';
+import { UploadService } from 'src/upload/upload.service';
 
 @Injectable()
 export class DeliveryService {
+  constructor(private uploadService: UploadService) {}
+
   async createDelivery(data: { id: string; delivery: CreateDeliveryDto }) {
     const { id, delivery } = data;
-    const { total, deliveryItems, attachments, driver } = delivery;
+    const { total, deliveryItems, driver } = delivery;
+
+    const attachments = await this.uploadService.uploadAttachments(
+      delivery.attachments,
+    );
 
     return prisma.$transaction(
       async (tx) => {
@@ -37,7 +44,7 @@ export class DeliveryService {
             cashierId: id,
             total,
             driver,
-            attachments: attachments || [],
+            attachments,
             items: {
               create: deliveryItems.map((item) => ({
                 qty: item.qty,
@@ -66,7 +73,11 @@ export class DeliveryService {
 
   async editDelivery(data: { id: string; delivery: EditDeliveryDto }) {
     const { id, delivery } = data;
-    const { total, deliveryItems, attachments, driver } = delivery;
+    const { total, deliveryItems, driver } = delivery;
+
+    const attachments = await this.uploadService.uploadAttachments(
+      delivery.attachments,
+    );
 
     return prisma.$transaction(
       async (tx) => {
@@ -126,7 +137,7 @@ export class DeliveryService {
           data: {
             total,
             driver,
-            attachments: attachments || [],
+            attachments,
             items: {
               create: deliveryItems.map((item) => ({
                 qty: item.qty,

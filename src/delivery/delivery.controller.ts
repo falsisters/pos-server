@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Request,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { DeliveryService } from './delivery.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
@@ -17,6 +19,7 @@ import {
   PermissionGuard,
   RequirePermission,
 } from '../permission/permission.guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('delivery')
 export class DeliveryController {
@@ -25,10 +28,26 @@ export class DeliveryController {
   @UseGuards(CashierAuthGuard, PermissionGuard)
   @RequirePermission('DELIVERIES')
   @Post('create')
+  @UseInterceptors(FilesInterceptor('attachments'))
   async createDelivery(
     @Request() req,
-    @Body() createDeliveryDto: CreateDeliveryDto,
+    @Body() body: any,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
+    // Reconstruct the CreateDeliveryDto
+    const createDeliveryDto: CreateDeliveryDto = {
+      total: parseFloat(body.total),
+      driver: body.driver,
+      deliveryItems: JSON.parse(body.deliveryItems),
+      attachments: files
+        ? files.map((file) => ({
+            fileName: file.originalname,
+            path: 'deliveries',
+            file: file,
+          }))
+        : [],
+    };
+
     const user = req.user;
     return this.deliveryService.createDelivery({
       id: user.id,

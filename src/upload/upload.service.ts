@@ -19,10 +19,10 @@ export class UploadService {
       credentials: {
         accessKeyId: `${process.env.AWS_ACCESS_KEY}`,
         secretAccessKey: `${process.env.AWS_SECRET_ACCESS_KEY}`,
-      },
+      }, // yes
     });
 
-    this.defaultBucket = `${process.env.AWS_BUCKET}`;
+    this.defaultBucket = `${process.env.AWS_BUCKET_NAME}`;
   }
 
   async getSignedUrl(key: string, expiresIn: number = 3600) {
@@ -40,7 +40,7 @@ export class UploadService {
 
   async uploadSingleFile(data: UploadFileDto) {
     const { path, fileName, file } = data;
-    const key = `${path}/${fileName}-${Date.now()}`;
+    const key = `${path}/${Date.now()}-${fileName}`;
 
     try {
       // Compress the file using sharp by converting it to JPG

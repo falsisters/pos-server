@@ -1,6 +1,12 @@
 import { IsArray, IsNotEmpty } from 'class-validator';
 import { ProductType } from '@prisma/client';
 
+class Upload {
+  fileName: string;
+  path: string;
+  file: Express.Multer.File;
+}
+
 export class CreateProductDto {
   @IsNotEmpty()
   name: string;
@@ -10,12 +16,6 @@ export class CreateProductDto {
 
   @IsArray()
   price: PriceDto[];
-}
-
-class Upload {
-  fileName: string;
-  path: string;
-  file: Express.Multer.File;
 }
 
 class PriceDto {

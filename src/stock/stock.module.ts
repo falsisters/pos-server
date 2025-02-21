@@ -8,9 +8,11 @@ import { AuthService } from 'src/auth/auth.service';
 import { CashierService } from 'src/cashier/cashier.service';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { UploadModule } from 'src/upload/upload.module';
+import { UploadService } from 'src/upload/upload.service';
 
 @Module({
-  imports: [CashierModule, AuthModule, UserModule],
+  imports: [CashierModule, AuthModule, UserModule, UploadModule],
   controllers: [StockController],
   providers: [
     StockService,
@@ -18,6 +20,7 @@ import { JwtService } from '@nestjs/jwt';
     CashierService,
     UserService,
     JwtService,
+    UploadService,
   ],
 })
 export class StockModule {}

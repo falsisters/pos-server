@@ -15,7 +15,7 @@ import { JwtAuthGuard } from './jwt/jwt.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('login')
+  @Post()
   async login(@Body() loginDto: LoginDto) {
     return this.authService.validateUser(loginDto);
   }

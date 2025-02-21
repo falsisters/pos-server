@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { prisma } from '../prisma';
 import { CashierJwtPayload, CashierWithPermissions } from './cashier.type';
@@ -117,6 +117,8 @@ export class CashierService {
   ) {
     if (accessKey === cashier.accessKey) {
       return this.login(cashier);
+    } else {
+      throw new BadRequestException('Invalid name or access key');
     }
   }
 

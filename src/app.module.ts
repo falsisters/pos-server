@@ -8,7 +8,6 @@ import { ProductModule } from './product/product.module';
 import { SaleModule } from './sale/sale.module';
 import { DeliveryModule } from './delivery/delivery.module';
 import { KahonModule } from './kahon/kahon.module';
-import { TransferModule } from './transfer/transfer.module';
 import { BreakdownModule } from './breakdown/breakdown.module';
 import { ExpenseModule } from './expense/expense.module';
 import { ConfigModule } from '@nestjs/config';
@@ -25,7 +24,6 @@ import { UploadModule } from './upload/upload.module';
     SaleModule,
     DeliveryModule,
     KahonModule,
-    TransferModule,
     BreakdownModule,
     ExpenseModule,
     ConfigModule.forRoot({

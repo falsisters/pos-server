@@ -98,7 +98,6 @@ model Product {
   user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  Transfer     Transfer[]
   Price        Price[]
   KahonStock   KahonStock[]
 }
@@ -114,6 +113,7 @@ model Price {
   updatedAt    DateTime       @updatedAt
   Profit       Profit[]
   SpecialPrice SpecialPrice[]
+  Transfer     Transfer[]
 }
 
 model SpecialPrice {
@@ -203,9 +203,9 @@ model DeliveryItem {
 
 model Transfer {
   id          String       @id @default(cuid())
-  productId   String
-  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   attachments String[]
+  priceId     String
+  price       Price        @relation(fields: [priceId], references: [id], onDelete: Cascade)
   qty         Int
   type        TransferType
   createdAt   DateTime     @default(now())

@@ -91,6 +91,7 @@ model Shift {
 model Product {
   id           String         @id @default(cuid())
   name         String
+  picture      String         @default("https://placehold.co/720?text=Product")
   SaleItem     SaleItem[]
   DeliveryItem DeliveryItem[]
   userId       String

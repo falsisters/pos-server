@@ -75,7 +75,7 @@ export class ProductService {
     const { user, product } = data;
     const { name } = product;
 
-    const url = await this.uploadService.uploadSingleFile(product.upload);
+    const url = await this.uploadService.uploadSingleFile(product.picture);
 
     return prisma.product.create({
       data: {

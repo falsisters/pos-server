@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
@@ -20,6 +22,7 @@ import {
   PermissionGuard,
   RequirePermission,
 } from '../permission/permission.guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('product')
 export class ProductController {
@@ -62,23 +65,47 @@ export class ProductController {
 
   @UseGuards(JwtAuthGuard)
   @Post('create')
+  @UseInterceptors(FilesInterceptor('picture'))
   async createProduct(
     @Request() req,
     @Body() createProductDto: CreateProductDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
+    const createProductDtoWithUpload = {
+      ...createProductDto,
+      picture: {
+        fileName: file.originalname,
+        path: 'products',
+        file,
+      },
+    };
+
     const user: JwtPayload = req.user;
     return this.productService.createProduct({
       user,
-      product: createProductDto,
+      product: createProductDtoWithUpload,
     });
   }
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  async editProduct(@Param('id') id, @Body() editProductDto: EditProductDto) {
+  @UseInterceptors(FilesInterceptor('picture'))
+  async editProduct(
+    @Param('id') id,
+    @Body() editProductDto: EditProductDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const editProductDtoWithUpload = {
+      ...editProductDto,
+      picture: {
+        fileName: file.originalname,
+        path: 'products/',
+        file,
+      },
+    };
     return this.productService.editProduct({
       id,
-      product: editProductDto,
+      product: editProductDtoWithUpload,
     });
   }
 

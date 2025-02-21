@@ -12,7 +12,7 @@ export class CreateProductDto {
   name: string;
 
   @IsNotEmpty()
-  upload: Upload;
+  picture: Upload;
 
   @IsArray()
   price: PriceDto[];

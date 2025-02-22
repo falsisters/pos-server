@@ -99,21 +99,21 @@ model Product {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   Price        Price[]
-  KahonStock   KahonStock[]
 }
 
 model Price {
-  id           String         @id @default(cuid())
-  price        Float
-  stock        Int
-  type         ProductType
-  productId    String
-  product      Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  Profit       Profit[]
-  SpecialPrice SpecialPrice[]
-  Transfer     Transfer[]
+  id                   String                 @id @default(cuid())
+  price                Float
+  stock                Int
+  type                 ProductType
+  productId            String
+  product              Product                @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  Profit               Profit[]
+  SpecialPrice         SpecialPrice[]
+  Transfer             Transfer[]
+  KahonTransferredItem KahonTransferredItem[]
 }
 
 model SpecialPrice {
@@ -188,17 +188,23 @@ model Delivery {
   updatedAt    DateTime       @updatedAt
 }
 
+enum DeliveryStatus {
+  RECEIVED
+  TRANSFERRED
+}
+
 model DeliveryItem {
-  id         String      @id @default(cuid())
+  id         String         @id @default(cuid())
   deliveryId String
-  delivery   Delivery    @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  delivery   Delivery       @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
   productId  String
-  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product    Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
   qty        Int
   price      Float
   type       ProductType
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  status     DeliveryStatus @default(RECEIVED)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
 }
 
 model Transfer {
@@ -219,33 +225,58 @@ enum TransferType {
 }
 
 model Kahon {
-  id                 String               @id @default(cuid())
-  cashierId          String
-  cashier            Cashier              @relation(fields: [cashierId], references: [id], onDelete: Cascade)
-  total              Float
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  KahonTotalModifier KahonTotalModifier[]
+  id                   String                 @id @default(cuid())
+  cashierId            String
+  cashier              Cashier                @relation(fields: [cashierId], references: [id], onDelete: Cascade)
+  name                 String
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  KahonTotalModifier   KahonTotalModifier[]
+  KahonTransferredItem KahonTransferredItem[]
+  KahonItem            KahonItem[]
 }
 
-model KahonStock {
-  id                 String               @id @default(cuid())
-  qty                Int
-  productId          String
-  product            Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  KahonStockModifier KahonStockModifier[]
+model KahonTransferredItem {
+  id                           String                         @id @default(cuid())
+  qty                          Int
+  priceId                      String
+  price                        Price                          @relation(fields: [priceId], references: [id], onDelete: Cascade)
+  kahonId                      String
+  kahon                        Kahon                          @relation(fields: [kahonId], references: [id], onDelete: Cascade)
+  createdAt                    DateTime                       @default(now())
+  updatedAt                    DateTime                       @updatedAt
+  KahonTransferredItemModifier KahonTransferredItemModifier[]
 }
 
-model KahonStockModifier {
-  id           String        @id @default(cuid())
-  index        Int
-  operation    OperationType
-  kahonStockId String
-  kahon        KahonStock    @relation(fields: [kahonStockId], references: [id], onDelete: Cascade)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+model KahonItem {
+  id                String              @id @default(cuid())
+  qty               Int
+  name              String
+  kahonId           String
+  kahon             Kahon               @relation(fields: [kahonId], references: [id], onDelete: Cascade)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  KahonItemModifier KahonItemModifier[]
+}
+
+model KahonTransferredItemModifier {
+  id                     String               @id @default(cuid())
+  index                  Int
+  operation              OperationType
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  kahonTransferredItemId String
+  kahonTransferredItem   KahonTransferredItem @relation(fields: [kahonTransferredItemId], references: [id], onDelete: Cascade)
+}
+
+model KahonItemModifier {
+  id          String        @id @default(cuid())
+  index       Int
+  operation   OperationType
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  kahonItemId String
+  kahonItem   KahonItem     @relation(fields: [kahonItemId], references: [id], onDelete: Cascade)
 }
 
 model KahonTotalModifier {

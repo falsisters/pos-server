@@ -75,48 +75,64 @@ export class ProductService {
     const { user, product } = data;
     const { name } = product;
 
-    const url = await this.uploadService.uploadSingleFile(product.picture);
+    try {
+      const url = await this.uploadService.uploadSingleFile({
+        file: product.picture,
+        fileName: `${product.name}-${new Date().getTime()}`,
+        path: 'products',
+      });
 
-    return prisma.product.create({
-      data: {
-        name,
-        picture: url,
-        userId: user.id,
-        Price: {
-          create: product.price.map((p) => ({
-            price: p.price,
-            type: p.type,
-            stock: p.stock,
-            Profit: {
-              create: p.profit.map((pr) => ({
-                profit: pr.profit,
-              })),
-            },
-            SpecialPrice: {
-              create: p.specialPrice.map((sp) => ({
-                specialPrice: sp.specialPrice,
-                minimumQty: sp.minimumQty,
-              })),
-            },
-          })),
-        },
-      },
-      include: {
-        Price: {
-          include: {
-            Profit: true,
-            SpecialPrice: true,
+      const productPrice = JSON.parse(product.price.toString());
+
+      return prisma.product.create({
+        data: {
+          name,
+          picture: url,
+          userId: user.id,
+          Price: {
+            create: productPrice.map((p) => ({
+              price: p.price,
+              type: p.type,
+              stock: p.stock,
+              Profit: {
+                create: p.profit.map((pr) => ({
+                  profit: pr.profit,
+                })),
+              },
+              SpecialPrice: {
+                create: p.specialPrice.map((sp) => ({
+                  specialPrice: sp.specialPrice,
+                  minimumQty: sp.minimumQty,
+                })),
+              },
+            })),
           },
         },
-      },
-    });
+        include: {
+          Price: {
+            include: {
+              Profit: true,
+              SpecialPrice: true,
+            },
+          },
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async editProduct(data: { id: string; product: EditProductDto }) {
     const { id, product } = data;
     const { name } = product;
 
-    const url = await this.uploadService.uploadSingleFile(product.picture);
+    const url = await this.uploadService.uploadSingleFile({
+      file: product.picture,
+      fileName: `${product.name}-${new Date().getTime()}`,
+      path: 'products',
+    });
+
+    const productPrice = JSON.parse(product.price.toString());
 
     await prisma.price.deleteMany({
       where: {
@@ -132,7 +148,7 @@ export class ProductService {
         name,
         picture: url,
         Price: {
-          create: product.price.map((p) => ({
+          create: productPrice.map((p) => ({
             price: p.price,
             stock: p.stock,
             type: p.type,

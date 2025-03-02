@@ -11,64 +11,68 @@ export class DeliveryService {
     const { id, delivery } = data;
     const { total, deliveryItems, driver } = delivery;
 
-    const attachments = await this.uploadService.uploadAttachments(
-      delivery.attachments,
-    );
+    try {
+      const attachments = await this.uploadService.uploadAttachments(
+        delivery.attachments,
+      );
 
-    return prisma.$transaction(
-      async (tx) => {
-        // Update stocks for each item (INCREASE)
-        for (const item of deliveryItems) {
-          const price = await tx.price.findFirst({
-            where: {
-              productId: item.productId,
-              type: item.type,
-            },
-          });
+      return prisma.$transaction(
+        async (tx) => {
+          // Update stocks for each item (INCREASE)
+          for (const item of deliveryItems) {
+            const price = await tx.price.findFirst({
+              where: {
+                productId: item.productId,
+                type: item.type,
+              },
+            });
 
-          if (!price) {
-            throw new Error(
-              `Price not found for product ${item.productId} with type ${item.type}`,
-            );
+            if (!price) {
+              throw new Error(
+                `Price not found for product ${item.productId} with type ${item.type}`,
+              );
+            }
+
+            await tx.price.update({
+              where: { id: price.id },
+              data: { stock: price.stock + item.qty },
+            });
           }
 
-          await tx.price.update({
-            where: { id: price.id },
-            data: { stock: price.stock + item.qty },
-          });
-        }
-
-        // Create the delivery with items
-        return tx.delivery.create({
-          data: {
-            cashierId: id,
-            total,
-            driver,
-            attachments,
-            items: {
-              create: deliveryItems.map((item) => ({
-                qty: item.qty,
-                price: item.price,
-                type: item.type,
-                product: {
-                  connect: { id: item.productId },
-                },
-              })),
-            },
-          },
-          include: {
-            items: {
-              include: {
-                product: true,
+          // Create the delivery with items
+          return tx.delivery.create({
+            data: {
+              cashierId: id,
+              total,
+              driver,
+              attachments,
+              items: {
+                create: deliveryItems.map((item) => ({
+                  qty: item.qty,
+                  price: item.price,
+                  type: item.type,
+                  product: {
+                    connect: { id: item.productId },
+                  },
+                })),
               },
             },
-          },
-        });
-      },
-      {
-        timeout: 25000,
-      },
-    );
+            include: {
+              items: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          });
+        },
+        {
+          timeout: 25000,
+        },
+      );
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async editDelivery(data: { id: string; delivery: EditDeliveryDto }) {

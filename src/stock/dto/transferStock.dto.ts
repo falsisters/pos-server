@@ -1,19 +1,6 @@
 import { ProductType, TransferType } from '@prisma/client';
 import { IsArray, IsNotEmpty } from 'class-validator';
 
-export class TransferStockDto {
-  attachments: Upload[];
-
-  @IsNotEmpty()
-  qty: number;
-
-  @IsNotEmpty()
-  type: TransferType;
-
-  @IsArray()
-  price: PriceDto;
-}
-
 class Upload {
   fileName: string;
   path: string;
@@ -29,4 +16,17 @@ class PriceDto {
 
   @IsNotEmpty()
   type: ProductType;
+}
+
+export class TransferStockDto {
+  attachments: Upload[];
+
+  @IsNotEmpty()
+  qty: number;
+
+  @IsNotEmpty()
+  type: TransferType;
+
+  @IsArray()
+  price: PriceDto;
 }

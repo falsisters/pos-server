@@ -7,7 +7,7 @@ import {
   Post,
   Put,
   Request,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -69,15 +69,11 @@ export class ProductController {
   async createProduct(
     @Request() req,
     @Body() createProductDto: CreateProductDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() file: Express.Multer.File,
   ) {
     const createProductDtoWithUpload = {
       ...createProductDto,
-      picture: {
-        fileName: file.originalname,
-        path: 'products',
-        file,
-      },
+      picture: file[0],
     };
 
     const user: JwtPayload = req.user;
@@ -93,15 +89,11 @@ export class ProductController {
   async editProduct(
     @Param('id') id,
     @Body() editProductDto: EditProductDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() file: Express.Multer.File,
   ) {
     const editProductDtoWithUpload = {
       ...editProductDto,
-      picture: {
-        fileName: file.originalname,
-        path: 'products/',
-        file,
-      },
+      picture: file[0],
     };
     return this.productService.editProduct({
       id,

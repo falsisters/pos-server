@@ -1,20 +1,13 @@
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 import { ProductType } from '@prisma/client';
-
-class Upload {
-  fileName: string;
-  path: string;
-  file: Express.Multer.File;
-}
 
 export class CreateProductDto {
   @IsNotEmpty()
   name: string;
 
-  @IsNotEmpty()
-  picture: Upload;
+  picture: Express.Multer.File;
 
-  @IsArray()
+  @IsNotEmpty()
   price: PriceDto[];
 }
 
@@ -28,10 +21,10 @@ class PriceDto {
   @IsNotEmpty()
   type: ProductType;
 
-  @IsArray()
+  @IsNotEmpty()
   profit: ProfitDto[];
 
-  @IsArray()
+  @IsNotEmpty()
   specialPrice: SpecialPrice[];
 }
 

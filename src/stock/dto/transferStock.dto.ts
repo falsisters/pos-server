@@ -1,9 +1,12 @@
 import { ProductType, TransferType } from '@prisma/client';
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 class Upload {
   fileName: string;
+
   path: string;
+
+  @IsOptional()
   file: Express.Multer.File;
 }
 
@@ -19,6 +22,7 @@ class PriceDto {
 }
 
 export class TransferStockDto {
+  @IsOptional()
   attachments: Upload[];
 
   @IsNotEmpty()
@@ -27,6 +31,6 @@ export class TransferStockDto {
   @IsNotEmpty()
   type: TransferType;
 
-  @IsArray()
+  @IsNotEmpty()
   price: PriceDto;
 }

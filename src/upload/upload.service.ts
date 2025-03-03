@@ -38,6 +38,10 @@ export class UploadService {
     }
   }
 
+  async getPublicUrl(key: string) {
+    return `https://${this.defaultBucket}.s3.amazonaws.com/${key}`;
+  }
+
   async uploadSingleFile(data: UploadFileDto) {
     const { path, fileName, file } = data;
     const key = `${path}/${Date.now()}-${fileName}`;
@@ -57,7 +61,7 @@ export class UploadService {
 
       await this.s3Client.send(command);
 
-      return this.getSignedUrl(key);
+      return this.getPublicUrl(key);
     } catch (e) {
       throw new Error(e);
     }

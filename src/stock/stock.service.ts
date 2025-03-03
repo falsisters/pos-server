@@ -70,6 +70,7 @@ export class StockService {
 
   async transferStock(data: { product: TransferStockDto }) {
     const { product } = data;
+    const productPrice = JSON.parse(product.price.toString());
 
     const attachments = await this.uploadService.uploadAttachments(
       product.attachments,
@@ -78,26 +79,32 @@ export class StockService {
     return prisma.$transaction(async (tx) => {
       const price = await prisma.price.findUnique({
         where: {
-          id: product.price.id,
+          id: productPrice.id,
         },
       });
 
       if (!price) {
-        throw new Error(`Price not found for product ${product.price.id}`);
+        throw new Error(`Price not found for product ${productPrice.id}`);
       }
 
+      const newStock =
+        parseInt(productPrice.stock.toString()) -
+        parseInt(product.qty.toString());
+
       await tx.price.update({
-        where: { id: product.price.id },
-        data: { stock: price.stock - product.qty },
+        where: { id: productPrice.id },
+        data: {
+          stock: newStock,
+        },
       });
 
       return tx.transfer.create({
         data: {
           attachments,
           price: {
-            connect: { id: product.price.id },
+            connect: { id: productPrice.id },
           },
-          qty: product.qty,
+          qty: parseInt(product.qty.toString()),
           type: product.type,
         },
       });
@@ -106,19 +113,20 @@ export class StockService {
 
   async editStock(data: { id: string; product: EditStockDto }) {
     const { product, id } = data;
+    const productPrice = JSON.parse(product.price.toString());
     return prisma.product.update({
       where: {
         id,
       },
       data: {
         Price: {
-          updateMany: product.price.map((item) => ({
+          updateMany: productPrice.map((item) => ({
             where: {
               id: item.id,
               type: item.type,
             },
             data: {
-              stock: item.stock,
+              stock: parseInt(item.stock.toString()),
             },
           })),
         },

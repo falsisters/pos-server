@@ -34,11 +34,13 @@ export class StockController {
   ) {
     const newTransferStockDto: TransferStockDto = {
       ...transferStockDto,
-      attachments: files.map((file) => ({
-        fileName: file.originalname,
-        path: 'transfers/',
-        file: file,
-      })),
+      attachments: files
+        ? files.map((file) => ({
+            fileName: file.originalname,
+            path: 'transfers',
+            file: file,
+          }))
+        : [],
     };
 
     return this.stockService.transferStock({

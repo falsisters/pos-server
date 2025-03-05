@@ -241,6 +241,7 @@ model KahonTransferredItem {
   qty                          Int
   priceId                      String
   price                        Price                          @relation(fields: [priceId], references: [id], onDelete: Cascade)
+  value                        Float                          @default(0)
   kahonId                      String
   kahon                        Kahon                          @relation(fields: [kahonId], references: [id], onDelete: Cascade)
   createdAt                    DateTime                       @default(now())
@@ -252,6 +253,7 @@ model KahonItem {
   id                String              @id @default(cuid())
   qty               Int
   name              String
+  value             Float               @default(0)
   kahonId           String
   kahon             Kahon               @relation(fields: [kahonId], references: [id], onDelete: Cascade)
   createdAt         DateTime            @default(now())
@@ -263,6 +265,7 @@ model KahonTransferredItemModifier {
   id                     String               @id @default(cuid())
   index                  Int
   operation              OperationType
+  value                  Float                @default(0)
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
   kahonTransferredItemId String
@@ -273,6 +276,7 @@ model KahonItemModifier {
   id          String        @id @default(cuid())
   index       Int
   operation   OperationType
+  value       Float         @default(0)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   kahonItemId String
@@ -283,6 +287,7 @@ model KahonTotalModifier {
   id        String        @id @default(cuid())
   index     Int
   operation OperationType
+  value     Float         @default(0)
   kahonId   String
   kahon     Kahon         @relation(fields: [kahonId], references: [id], onDelete: Cascade)
   createdAt DateTime      @default(now())

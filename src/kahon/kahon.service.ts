@@ -6,16 +6,39 @@ import {
   TransferFromProducts,
 } from './dto/transferFromProducts.dto';
 import { CreateKahonItemDto } from './dto/createKahonItem.dto';
+import { UpdateKahonDto } from './dto/updateKahon.dto';
+import { Kahon } from '@prisma/client';
 
 @Injectable()
 export class KahonService {
   async getAllKahonByCashierId(data: { id: string }) {
     const { id } = data;
-    return prisma.kahon.findMany({
+
+    const kahon = await prisma.kahon.findMany({
       where: {
         cashierId: id,
       },
+      include: {
+        KahonItem: {
+          include: {
+            KahonItemModifier: true,
+          },
+        },
+        KahonTransferredItem: {
+          include: {
+            price: {
+              include: {
+                product: true,
+              },
+            },
+            KahonTransferredItemModifier: true,
+          },
+        },
+        KahonTotalModifier: true,
+      },
     });
+
+    return kahon;
   }
 
   async getKahonById(data: { id: string }) {
@@ -50,14 +73,62 @@ export class KahonService {
     });
   }
 
-  async updateKahon(data: { id: string; createKahonDto: CreateKahonDto }) {
-    const { id, createKahonDto } = data;
+  async updateKahon(data: { id: string; updateKahonDto: UpdateKahonDto }) {
+    const { id, updateKahonDto } = data;
+    const { kahonItem, kahonTransferredItem, kahonTotalModifier } =
+      updateKahonDto;
     return prisma.kahon.update({
       where: {
         id,
       },
       data: {
-        name: createKahonDto.name,
+        name: updateKahonDto.name,
+        KahonItem: {
+          deleteMany: {},
+          createMany: {
+            data: kahonItem.map((item) => ({
+              qty: item.qty,
+              name: item.name,
+              KahonItemModifier: {
+                createMany: item.kahonItemModifier.map((modifier) => ({
+                  index: modifier.index,
+                  operation: modifier.operation,
+                })),
+              },
+            })),
+          },
+        },
+
+        KahonTransferredItem: {
+          deleteMany: {},
+          create: kahonTransferredItem.map((item) => ({
+            qty: item.qty,
+            name: item.name,
+            price: {
+              connect: {
+                id: item.price.id,
+              },
+            },
+            KahonTransferredItemModifier: {
+              createMany: {
+                data: item.kahonTransferredItemModifier.map((modifier) => ({
+                  index: modifier.index,
+                  operation: modifier.operation,
+                })),
+              },
+            },
+          })),
+        },
+
+        KahonTotalModifier: {
+          deleteMany: {},
+          createMany: {
+            data: kahonTotalModifier.map((modifier) => ({
+              index: modifier.index,
+              operation: modifier.operation,
+            })),
+          },
+        },
       },
     });
   }
@@ -88,11 +159,38 @@ export class KahonService {
       },
     });
 
+    let assignedKahon: Kahon;
+
+    const kahonToday = await prisma.kahon.findFirst({
+      where: {
+        cashierId: id,
+        createdAt: {
+          gte: new Date(new Date().setHours(0, 0, 0, 0)),
+          lt: new Date(new Date().setHours(23, 59, 59, 999)),
+        },
+      },
+    });
+
+    if (kahonToday) {
+      assignedKahon = kahonToday;
+    } else {
+      assignedKahon = await prisma.kahon.create({
+        data: {
+          name: `Kahon ${new Date().toLocaleDateString()}`,
+          cashier: {
+            connect: {
+              id,
+            },
+          },
+        },
+      });
+    }
+
     return prisma.kahonTransferredItem.create({
       data: {
         kahon: {
           connect: {
-            id,
+            id: assignedKahon.id,
           },
         },
         price: {

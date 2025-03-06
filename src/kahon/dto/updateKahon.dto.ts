@@ -21,6 +21,9 @@ class KahonItem {
   @IsNotEmpty()
   name: string;
 
+  @IsNotEmpty()
+  value: number;
+
   kahonItemModifier: KahonItemModifier[];
 }
 
@@ -31,6 +34,9 @@ class KahonTransferredItem {
 
   @IsNotEmpty()
   name: string;
+
+  @IsNotEmpty()
+  value: number;
 
   @IsNotEmpty()
   price: PriceDto;
@@ -45,6 +51,10 @@ class KahonTotalModifier {
 
   @IsNotEmpty()
   operation: OperationType;
+
+  @IsNotEmpty()
+  @IsNumber()
+  value: number;
 }
 
 class KahonItemModifier {
@@ -54,6 +64,10 @@ class KahonItemModifier {
 
   @IsNotEmpty()
   operation: OperationType;
+
+  @IsNotEmpty()
+  @IsNumber()
+  value: number;
 }
 
 class KahonTransferredItemModifier {
@@ -63,6 +77,10 @@ class KahonTransferredItemModifier {
 
   @IsNotEmpty()
   operation: OperationType;
+
+  @IsNotEmpty()
+  @IsNumber()
+  value: number;
 }
 
 export class UpdateKahonDto {

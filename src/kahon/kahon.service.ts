@@ -55,6 +55,11 @@ export class KahonService {
         },
         KahonTransferredItem: {
           include: {
+            price: {
+              include: {
+                product: true,
+              },
+            },
             KahonTransferredItemModifier: true,
           },
         },
@@ -77,6 +82,8 @@ export class KahonService {
     const { id, updateKahonDto } = data;
     const { kahonItem, kahonTransferredItem, kahonTotalModifier } =
       updateKahonDto;
+
+    console.log(updateKahonDto);
     return prisma.kahon.update({
       where: {
         id,
@@ -85,18 +92,20 @@ export class KahonService {
         name: updateKahonDto.name,
         KahonItem: {
           deleteMany: {},
-          createMany: {
-            data: kahonItem.map((item) => ({
-              qty: item.qty,
-              name: item.name,
-              KahonItemModifier: {
-                createMany: item.kahonItemModifier.map((modifier) => ({
+          create: kahonItem.map((item) => ({
+            qty: item.qty,
+            name: item.name,
+            value: item.value,
+            KahonItemModifier: {
+              createMany: {
+                data: item.kahonItemModifier.map((modifier) => ({
                   index: modifier.index,
                   operation: modifier.operation,
+                  value: modifier.value,
                 })),
               },
-            })),
-          },
+            },
+          })),
         },
 
         KahonTransferredItem: {
@@ -104,6 +113,7 @@ export class KahonService {
           create: kahonTransferredItem.map((item) => ({
             qty: item.qty,
             name: item.name,
+            value: item.value,
             price: {
               connect: {
                 id: item.price.id,
@@ -114,6 +124,7 @@ export class KahonService {
                 data: item.kahonTransferredItemModifier.map((modifier) => ({
                   index: modifier.index,
                   operation: modifier.operation,
+                  value: modifier.value,
                 })),
               },
             },
@@ -125,6 +136,7 @@ export class KahonService {
           createMany: {
             data: kahonTotalModifier.map((modifier) => ({
               index: modifier.index,
+              value: modifier.value,
               operation: modifier.operation,
             })),
           },
